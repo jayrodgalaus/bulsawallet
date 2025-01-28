@@ -4,4 +4,5 @@ Bulsawallet is a simple budget tracking tool created with native HTML, CSS and J
 <ul>
   <li>Bulsawallet is meant as mobile-only, and therefore does not have a desktop view design.</li>
   <li>The tool is not connected to any database, but instead uses the browser's <code>local storage</code>. Feel free to modify the code and connect it to a database if needed.</li>
+  <li>You can use online conversion tools to generate an apk, such as <a href="https://www.webintoapp.com/">webintoapp</a></li>
 </ul>  
