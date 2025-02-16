@@ -9,14 +9,14 @@
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 	<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-	
+	<link href='https://fonts.googleapis.com/css?family=Anaheim' rel='stylesheet'>
 	
 	<style type="text/css">
 		body{
 			height: 100vh;
 			overflow-y: scroll;
 			overflow-x: hidden;
-			
+			font-family: 'Anaheim';
 		}
 		body::-webkit-scrollbar {
 		  display: none; /* for Chrome, Safari, and Opera */
@@ -68,6 +68,7 @@
 		.invis{ opacity: 0 !important;}
 		.focus-ring-0{--bs-focus-ring-color: rgba(var(--bs-success-rgb), 0)}
 		#cashInInput{ border-radius: 0%; font-size: 20pt;}
+		.small-caps{font-variant: small-caps;}
 	</style>
 </head>
 <body>
@@ -116,6 +117,7 @@
 					<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
 					<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
 					<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3" aria-label="Slide 4"></button>
+					<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="4" aria-label="Slide 5"></button>
 				</div>
 				<div class="carousel-inner">
 				  <div class="carousel-item active">
@@ -150,6 +152,15 @@
 						<div class="card-body">
 							<p>Total Spent</p>
 							<h1><span id="totalSpent">0.00</span></h1>
+							<br>
+						</div>
+					</div>
+				  </div>
+				  <div class="carousel-item">
+					<div class="card bg-card-gradient color-theme1 border-0 radius-theme">
+						<div class="card-body">
+							<p>Unallotted</p>
+							<h1><span id="totalUnallotted">0.00</span></h1>
 							<br>
 						</div>
 					</div>
@@ -250,7 +261,20 @@
 			<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
 		</div>
 		<div class="offcanvas-body d-flex flex-column">
-			<div class="d-flex flex-row position-relative">
+			<div class="card bg-theme2-gradient border-0">
+				<div class="card-body">
+					<div class="row text-light">
+						<div class="col"><span class="small"><b>Spent:</b> <span id="expenseSpent"></span></span></div>
+						<div class="col"><span class="small"><b>Balance:</b> <span id="expenseBalance"></span></span></div>
+					</div>
+					<hr>
+					<div class="row text-light">
+						<div class="col"><span class="small"><b>Allotted:</b> <span id="expenseAllotted"></span></span></div>
+						<div class="col"><span class="small"><b>Unalloted:</b> <span id="expenseUnallotted"></span></span></div>
+					</div>
+				</div>
+			</div>
+			<div class="d-flex flex-row position-relative mt-2">
 				<button id="toggleBalance" class="ms-auto border-0 bg-none fs-5"><i class="fa-solid fa-repeat" style="transform: translateY(-2px);"></i></button>
 				<button id="toggleAll" class="expense-filter border-0 bg-none fs-5"><i class="fa-solid fa-arrow-rotate-right"></i></button>
 				<button id="toggleFull" class="expense-filter border-0 bg-none fs-5"><i class="fa-solid fa-circle"></i></button>
@@ -387,7 +411,7 @@
 		    currency: 'PHP',
 		});
 		let expenseIndex = -1;
-		$('#totalBalance, #totalBudget, #totalAllotted, #totalSpent').text(peso.format($(this).text()))
+		$('#totalBalance, #totalBudget, #totalAllotted, #totalSpent, #totalUnallotted').text(peso.format($(this).text()))
 		
 		init();
 				
@@ -438,17 +462,18 @@
 		}
 		function setPageValues(){
 			$('#totalBudget').text(peso.format(currentMoValues.totalBudget))
-			$('#totalAllotted').text(peso.format(currentMoValues.totalAllotted))
+			$('#totalAllotted, #expenseAllotted').text(peso.format(currentMoValues.totalAllotted))
 			$('#totalRemaining').text(peso.format(currentMoValues.totalRemaining))
+			$('#totalUnallotted, #expenseUnallotted').text(peso.format(currentMoValues.totalBudget - currentMoValues.totalAllotted));
 			let balance = parseInt(currentMoValues.totalBudget);
 			
 			currentMoValues.expenses.forEach(function(item,index){
 				particularsTotal = getParticularsTotal(index)
 				balance -= particularsTotal
 			})
-			$('#totalBalance').text(peso.format(balance))
+			$('#totalBalance, #expenseBalance').text(peso.format(balance))
 			let spent = parseInt(currentMoValues.totalBudget) - balance;
-			$('#totalSpent').text(peso.format(spent))
+			$('#totalSpent, #expenseSpent').text(peso.format(spent))
 			$('#expensesList').empty()
 			if(currentMoValues.expenses.length > 0){
 				currentMoValues.expenses.forEach(makeExpenseItem)
