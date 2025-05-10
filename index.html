@@ -321,8 +321,8 @@
 						  <h2 id="expenseCanvasAllotted"></h2>
 						  <p><button class="border border-0 bg-none color-theme4" id="editExpenseAllotment" type="button" data-bs-toggle="offcanvas" data-bs-target="#editExpenseAllotmentCanvas" aria-controls="editExpenseAllotmentCanvas"><i class="fa-solid fa-pen"></i></button></p>
 					  </div>
-					  
-					<button class="btn btn-sm bg-theme bg-theme4 float-end small text-light mt-2" id="payInFull">Pay in full</button>
+                    <button class="btn btn-sm bg-theme bg-theme4 float-end small text-light mt-2" id="payInFull">Pay in full</button>
+                    <button class="btn btn-sm bg-theme bg-theme4 float-end small text-light mt-2 mx-2" id="reallocate">Reallocate</button>
 				</div>
 			</div>
 			<div class="card border border-0 bg-none">
@@ -795,6 +795,26 @@
 				if($(e.target).hasClass('border') || $(e.target).hasClass('fa-solid')){return false;}
 				$(this).find('.expense-allotment').toggleClass('flipped');
 			})
+            .on('click','#reallocate',function(){
+                let i = $('#saveNewParticular').attr('index');
+                let expense = currentMoValues.expenses[i];
+                let actualExp = parseInt(getParticularsTotal(i));
+                let unspent = parseInt(expense.allotment) - actualExp;
+                if(unspent <= 0){
+                    $('#message').text('No unspent amount to reallocate.');
+                    $('#messageModal').modal('show');
+                    return false;
+                }else{
+                    console.log(currentMoValues)
+                    currentMoValues.totalRemaining += unspent;
+                    currentMoValues.totalAllotted -= unspent;
+                    currentMoValues.expenses[i].allotment = actualExp;
+                    saveYrValues(monthindex,year);
+                    $('#message').text('Reallocation successful.');
+                    $('#messageModal').modal('show');
+                    $('#expenseCanvasAllotted').text(peso.format(actualExp));
+                }
+            })
 			.on('click','#payInFull',function(){
 				let i = $('#saveNewParticular').attr('index')			
 				let expense = currentMoValues.expenses[i];
